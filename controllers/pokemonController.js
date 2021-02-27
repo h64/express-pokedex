@@ -4,30 +4,35 @@ const db = require('../models')
 
 
 router.get('/', async (req, res) => {
-    try {
-        const pokemons = await db.pokemon.findAll({ raw: true })
-        // console.log(pokemons)
-        
-        res.render('pokemon/index', { pokemons: pokemons })
-    } catch (err) {
-        console.log(err)
-        res.redirect('/')
+    if(!res.locals.user) {
+        res.redirect('/auth/login')
+    } else {
+        try {
+            const user = await db.user.findOne({
+                where: { id: res.locals.user.id }, 
+                include: db.pokemon
+            })
+    
+            // console.log(user)
+            res.render('pokemon/index', { pokemons: user.dataValues.pokemons } )
+        } catch (err) {
+            console.log(err)
+        }
     }
 })
 
 router.post('/', async (req, res) => {
-    console.log(req.body)
     try {
         const [newPokemon, created] = await db.pokemon.findOrCreate({
-            where: { name: req.body.name }
+            where: { 
+                name: req.body.name 
+            }
         })
-        // console.log(newPokemon)
-        // console.log(created)
-
-        res.redirect('/pokemons')
+        // console.log(created);
+        res.locals.user.addPokemon(newPokemon);
+        res.redirect(`/pokemons`)
     } catch (err) {
         console.log(err)
-        res.redirect('/')
     }
 })
 

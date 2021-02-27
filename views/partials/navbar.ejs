@@ -4,8 +4,12 @@
         <a href="/pokemons">Favorites</a>
     </div>
     <div>
-        <a href="/auth/login">Log in</a>
-        <a href="/auth/new">Sign up</a>
-        <a href="/auth/logout">Log out</a>
+        <% if(user) { %>
+            <span><%= user.username %></span>
+            <a href="/auth/logout">Log Out</a>    
+        <% } else { %>
+            <a href="/auth/login">Log In</a>
+            <a href="/auth/new">Sign up</a>
+        <% } %>
     </div>
 </nav>
