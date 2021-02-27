@@ -7,7 +7,7 @@ const pokemonCreateTest = async () => {
     })
     console.log('Created: ', newPokemon.name)
 }
-pokemonCreateTest()
+// pokemonCreateTest()
 
 const pokemonFindTest = async () => {
     const foundPokemon = await db.pokemon.findOne({
@@ -17,4 +17,27 @@ const pokemonFindTest = async () => {
     })
     console.log('Found: ', foundPokemon.name)
 }
-pokemonFindTest();
+// pokemonFindTest();
+
+const userTest = async () => {
+    try {
+        const newUser = await db.user.create({
+            username: "test",
+            password: "test"
+        })
+        console.log('Created a new user!', newUser.username)
+
+
+        const foundUser = await db.user.findOne({
+            where: {
+                username: "test"
+            }
+        })
+        console.log('Found the user!', foundUser.username)
+    } catch (err) {
+        console.log(err)
+    }
+}
+userTest();
+
+

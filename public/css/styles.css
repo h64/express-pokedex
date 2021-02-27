@@ -3,6 +3,8 @@ body {
 }
 
 nav {
+    display: flex;
+    justify-content: space-between;
     background-color: rebeccapurple;
     padding: 10px;
 }

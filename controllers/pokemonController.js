@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const { default: axios } = require('axios')
 const db = require('../models')
 
 
@@ -27,6 +28,19 @@ router.post('/', async (req, res) => {
     } catch (err) {
         console.log(err)
         res.redirect('/')
+    }
+})
+
+
+router.get('/:name', async (req, res) => {
+    try {
+        const pokeApiUrl = `https://pokeapi.co/api/v2/pokemon/${req.params.name}`
+        const response = await axios.get(pokeApiUrl)
+        const pokemon = response.data
+
+        res.render('pokemon/show', { pokemon: pokemon })
+    } catch (err) {
+
     }
 })
 
