@@ -31,9 +31,10 @@ We'll be using the [PokeAPI](http://pokeapi.co/), a Pokemon API that allows us t
 ### Part 1: Project Setup & API Investigation
 Run `npm i` to install dependencies
 
-Setup `server.js` with a basic express erver
+Setup `server.js` with a basic express server
 
-
+Use `axios` to fetch pokemon data from the pokemon API at the home route `/`
+* Display that data in `index.ejs`
 
 ### Part 2: Setup Database
 
@@ -45,7 +46,7 @@ Your first step will be to create a SQL database for your application. Recall th
 4. Update your newly created `config/config.json` file as we did in class. This means changing the credentials, updating the SQL flavor, and changing the database name to `pokedex`.
 5. Run `createdb pokedex` to create your database inside of Postgres
 
-#### Part 3: Create your Pokemon Model and Table
+### Part 3: Create your Pokemon Model and Table
 
 Our data model needs only one attribute: `name`.
 
@@ -75,7 +76,7 @@ db.pokemon.findOne({
 
 Test by running the file: `node dbTest.js`.
 
-### Part 3: Integrating the database with the app
+### Part 4: Integrating the database with the app
 
 You'll want to add functionality to the following routes by incorporating the `pokemon` table you created.
 
@@ -89,7 +90,7 @@ You'll want to add functionality to the following routes by incorporating the `p
   * Purpose: Creates a new Pokemon and redirects back to `/pokemon`
   * What is the sequelize function we use here?
 
-### Part 4: Display more info on each Pokemon
+### Part 5: Display more info on each Pokemon
 
 Add a route `GET /pokemon/:name` that renders a `show` page with information about the Pokemon.
 
@@ -98,24 +99,41 @@ Add a route `GET /pokemon/:name` that renders a `show` page with information abo
 
 Check out the result of the pokemon API calls (or see the [doc page](http://pokeapi.co/)) for ideas on what data you could show. Show at least 4 pieces of data (e.g. attacks, habitat, etc.)
 
-### Part 5: Add User Model:
+### Part 6: Add User Model:
 Similar to how in step 3 we created a `pokemon` model, create a `user` model with fields `username` and `password`
 
 Run the migrations and test the newly made model in your `dbTest.js`
 
-### Part 6: Update app w/ User Auth
+### Part 6.5 Add the users_pokemons join table
+* Create the join table using `sequelize model:create`
+* Update the `user` model to have a Many to Many relationship with `pokemon`
+```
+static associate(models) {
+    models.user.belongsToMany(models.pokemon, { through: 'users_pokemons'})
+}
+```
+* Update the `pokemon` model to have a Many to Many relationship with `user`
+```
+static associate(models) {
+    models.pokemon.belongsToMany(models.user, { through: 'users_pokemons'})
+}
+```
+
+### Part 7: Update app w/ User Auth
 Add conditional rendering to your Navbar. If there's a `user` logged in, render a Log Out button, and if there isn't, render Log in and Sign up buttons.
 
 Views and Routes to create:
 
-GET /auth/login - Display a login form
-GET /auth/new - Display a signup form that posts to /auth
-POST /auth - Create a user 
+* GET /auth/login - Display a login form
+* GET /auth/new - Display a signup form that posts to /auth
+* POST /auth - Create a user 
 
+### Part 8: Revisit Pokemon Controller w/ the User association
+* Revisit the POST /pokemon route: When creating a pokemon, we must add the `user` relationship
+`res.locals.user.addPokemon(newPokemon)`
+* Revisit the GET /pokemon route: On the pokemon index page - show only the pokemon that belong to the logged in user!
+* If there is no logged in user - redirect to the sign in page!
 
-### Part 7:
-
-When finished with the above, style the application more to your liking with CSS.
 
 ## API Limits
 You might notice the API doesn't return all the data it has at once. It has a
